@@ -26,7 +26,11 @@
 		:subtitle="subtitle"
 		@close="closeSidebar">
 		<template #secondary-actions>
-			<ActionButton icon="icon-external" @click.stop="showModal()">
+			<ActionButton v-if="cardDetailsInModal" icon="icon-menu-sidebar" @click.stop="showModal()">
+				{{ t('deck', 'Open in sidebar view') }}
+			</ActionButton>
+
+			<ActionButton v-else icon="icon-external" @click.stop="showModal()">
 				{{ t('deck', 'Open in bigger view') }}
 			</ActionButton>
 		</template>
@@ -139,6 +143,7 @@ export default {
 	computed: {
 		...mapState({
 			currentBoard: state => state.currentBoard,
+			cardDetailsInModal: state => state.cardDetailsInModal,
 		}),
 		...mapGetters(['canEdit', 'assignables']),
 		attachments() {

@@ -108,6 +108,13 @@ export default {
 
 <style lang="scss" scoped>
 
+	.app-sidebar::v-deep {
+		border-left: 0;
+		width: 800px;
+		max-width: 780px;
+		top: 0px;
+	}
+
 	#content {
 		#app-content {
 			transition: margin-left 100ms ease;
