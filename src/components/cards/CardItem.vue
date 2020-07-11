@@ -47,17 +47,11 @@
 					<input type="button" class="icon-confirm" @click="finishedEdit(card)">
 				</form>
 
-				<div v-if="!editing" class="duedate right">
-					<transition name="zoom">
-						<div v-if="card.duedate" :class="dueIcon">
-							<span>{{ relativeDate }}</span>
-						</div>
-					</transition>
-				</div>
+				<DueDate v-if="!editing" :card="card" />
 
 				<CardMenu v-if="!editing && compactMode" :id="id" class="right" />
 			</div>
-			<transition-group v-if="card.labels.length"
+			<transition-group v-if="card.labels && card.labels.length"
 				name="zoom"
 				tag="ul"
 				class="labels"
@@ -67,7 +61,7 @@
 				</li>
 			</transition-group>
 			<div v-show="!compactMode" class="card-controls compact-item" @click="openCard">
-				<CardBadges :id="id" />
+				<CardBadges :card="card" />
 			</div>
 		</div>
 	</AttachmentDragAndDrop>
@@ -76,16 +70,16 @@
 <script>
 import ClickOutside from 'vue-click-outside'
 import { mapState, mapGetters } from 'vuex'
-import moment from 'moment'
 import CardBadges from './CardBadges'
 import Color from '../../mixins/color'
 import labelStyle from '../../mixins/labelStyle'
 import AttachmentDragAndDrop from '../AttachmentDragAndDrop'
 import CardMenu from './CardMenu'
+import DueDate from './badges/DueDate'
 
 export default {
 	name: 'CardItem',
-	components: { CardBadges, AttachmentDragAndDrop, CardMenu },
+	components: { CardBadges, AttachmentDragAndDrop, CardMenu, DueDate },
 	directives: {
 		ClickOutside,
 	},
@@ -116,31 +110,11 @@ export default {
 			return this.$store.getters.cardById(this.id)
 		},
 		currentCard() {
-			return this.$route.params.cardId === this.id
-		},
-		relativeDate() {
-			const diff = moment(this.$root.time).diff(this.card.duedate, 'seconds')
-			if (diff >= 0 && diff < 45) {
-				return t('core', 'seconds ago')
+			if (this.$route) {
+				return this.$route.params.cardId === this.id
 			}
-			return moment(this.card.duedate).fromNow()
 		},
-		dueIcon() {
-			const days = Math.floor(moment(this.card.duedate).diff(this.$root.time, 'seconds') / 60 / 60 / 24)
-			if (days < 0) {
-				return 'icon-calendar due icon overdue'
-			}
-			if (days === 0) {
-				return 'icon-calendar-dark due icon now'
-			}
-			if (days === 1) {
-				return 'icon-calendar-dark due icon next'
-			}
-			return 'icon-calendar-dark due icon'
-		},
-		dueDateTooltip() {
-			return moment(this.card.duedate).format('LLLL')
-		},
+
 	},
 	methods: {
 		openCard() {
@@ -213,42 +187,7 @@ export default {
 			}
 		}
 
-		.labels {
-			flex-grow: 1;
-			flex-shrink: 1;
-			min-width: 0;
-			display: flex;
-			flex-direction: row;
-			margin-left: $card-padding;
-			margin-right: $card-padding;
-			margin-top: -5px;
-
-			li {
-				flex-grow: 0;
-				flex-shrink: 1;
-				display: flex;
-				flex-direction: row;
-				overflow: hidden;
-				padding: 0px 5px;
-				border-radius: 15px;
-				font-size: 85%;
-				margin-right: 3px;
-				margin-bottom: 3px;
-
-				&:hover {
-					overflow: unset;
-				}
-
-				span {
-					flex-grow: 0;
-					flex-shrink: 1;
-					min-width: 0;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-				}
-			}
-		}
+		@import './../../css/labels';
 
 		.card-controls {
 			display: flex;
@@ -265,49 +204,6 @@ export default {
 	.right {
 		display: flex;
 		align-items: flex-start;
-	}
-
-	.icon.due {
-		background-position: 4px center;
-		border-radius: 3px;
-		margin-top: 9px;
-		margin-bottom: 9px;
-		padding: 3px 4px;
-		padding-right: 0;
-		font-size: 90%;
-		display: flex;
-		align-items: center;
-		opacity: .5;
-		flex-shrink: 1;
-		z-index: 2;
-
-		.icon {
-			background-size: contain;
-		}
-
-		&.overdue {
-			background-color: var(--color-error);
-			color: var(--color-primary-text);
-			opacity: .7;
-			padding: 3px 4px;
-		}
-		&.now {
-			background-color: var(--color-warning);
-			opacity: .7;
-			padding: 3px 4px;
-		}
-		&.next {
-			background-color: var(--color-background-dark);
-			opacity: .7;
-			padding: 3px 4px;
-		}
-
-		span {
-			margin-left: 20px;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			overflow: hidden;
-		}
 	}
 
 	.compact {
