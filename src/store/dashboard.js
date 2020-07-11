@@ -57,7 +57,7 @@ export default {
 			const assignedCards = await apiClient.findMyAssignedCards()
 			const assignedCardsFlat = assignedCards.flat()
 			commit('setAssignedCards', assignedCardsFlat)
-			
+
 		},
 	},
 }

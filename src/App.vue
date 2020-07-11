@@ -85,7 +85,6 @@ export default {
 	created: function() {
 		this.$store.dispatch('loadBoards')
 		this.$store.dispatch('loadSharees')
-		this.$store.dispatch('loadDashboards')
 	},
 }
 
