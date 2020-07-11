@@ -132,10 +132,7 @@ export default {
 <style lang="scss" scoped>
 
 	@import "../../css/animations.scss";
-
-	$board-spacing: 15px;
-	$stack-spacing: 10px;
-	$stack-width: 300px;
+	@import "../../css/variables.scss";
 
 	.board-wrapper {
 		position: relative;
